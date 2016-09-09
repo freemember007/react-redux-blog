@@ -22,8 +22,9 @@ export const signIn = user => {
   return (dispatch, getState) => {
     // const cache = sessionStorage.getItem(LOGIN_USER);
     axios.post(LOGIN_USER, user).then(res => {
-      dispatch(handleSignIn(res.data));
-      sessionStorage.setItem(LOGIN_USER, JSON.stringify(res.data));
+      dispatch(handleSignIn(res.data.user));
+      sessionStorage.setItem(LOGIN_USER, JSON.stringify(res.data.user));
+      sessionStorage.setItem('token',res.data.token);
     });
     // if (cache) {
     //   console.log('fromcache');
@@ -39,11 +40,10 @@ export const signIn = user => {
 }
 
 export const checkLogin = () => {
-  const cache = sessionStorage.getItem(LOGIN_USER);
+  const token = sessionStorage.getItem('token');
   let url = ROOT_URL + '/user/check?token=';
-  if (cache) {
-    let user = JSON.parse(cache);
-    url += user._id;
+  if (token) {
+    url += token;
   }
   return dispatch => {
     axios.get(url).then(res => {
